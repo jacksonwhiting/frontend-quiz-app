@@ -16,6 +16,8 @@ export default component$(() => {
    * Don't remove the `<head>` and `<body>` elements.
    */
 
+  //https://mocki.io/v1/34bf1f5a-6158-440d-96fe-372a1e245700
+
   return (
     <QwikCityProvider>
       <head>
@@ -24,7 +26,7 @@ export default component$(() => {
         <RouterHead />
         <ServiceWorkerRegister />
       </head>
-      <body lang="en">
+      <body lang="en" class="text-bodyM font-fontPri">
         <RouterOutlet />
       </body>
     </QwikCityProvider>
