@@ -22,7 +22,31 @@ export const useServerTimeLoader = routeLoader$(() => {
   };
 });
 
+//https://mocki.io/v1/34bf1f5a-6158-440d-96fe-372a1e245700
+
+export const useQuizData = routeLoader$(async () => {
+  // This code runs only on the server, after every navigation
+  const data = await fetch(
+    "https://mocki.io/v1/34bf1f5a-6158-440d-96fe-372a1e245700",
+  ).then((response) => {
+    try {
+      if (!response.ok) {
+        throw new Error(
+          "Received a response other than 'ok' when fetching data from the URL ",
+        );
+      } else {
+        return response.json();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  });
+  return data;
+});
+
 export default component$(() => {
+  const quizSignal = useQuizData();
+  console.log(quizSignal.value);
   return (
     <>
       <main>
