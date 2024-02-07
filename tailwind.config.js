@@ -12,6 +12,7 @@ export default {
           "fill-pri": "#F4F6FA", //Light Gray
           success: "#26D782", //Lime Green
           caution: "#EE5454", //Orange/Red
+          "html-cat": "#FF7E35", //Orange
         },
       },
       fontFamily: {
@@ -35,10 +36,11 @@ export default {
         ],
       },
       fontSize: {
-        hdgL: "4rem",
-        hdgM: "2.25rem",
-        hdgS: "1.75rem",
-        bodyM: ".75rem",
+        hdgL: "4rem", //64px
+        hdgM: "2.5rem", //40px
+        hdgS: "1.75rem", //28px
+        hdgXs: "1.125rem", //18px
+        bodyM: ".875rem", //14px
       },
     },
   },

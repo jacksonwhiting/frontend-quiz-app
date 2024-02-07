@@ -1,6 +1,8 @@
 import { component$, Slot } from "@builder.io/qwik";
 import { routeLoader$ } from "@builder.io/qwik-city";
 import type { RequestHandler } from "@builder.io/qwik-city";
+import Header from "../components/header";
+import dataJson from "../../public/data.json";
 
 // Supports weights 300-900
 import "@fontsource-variable/rubik";
@@ -45,13 +47,14 @@ export const useQuizData = routeLoader$(async () => {
 });
 
 export default component$(() => {
-  const quizSignal = useQuizData();
-  console.log(quizSignal.value);
+  // const quizSignal = useQuizData();
+  console.log(dataJson);
   return (
-    <>
+    <div class="min-h-screen bg-skin-canvas-pri bg-[url('./media/pattern-background-mobile-light.svg')] bg-no-repeat px-6 py-3">
+      <Header src={dataJson.quizzes[0].icon} />
       <main>
         <Slot />
       </main>
-    </>
+    </div>
   );
 });
