@@ -12,7 +12,10 @@ export default {
           "fill-pri": "#F4F6FA", //Light Gray
           success: "#26D782", //Lime Green
           caution: "#EE5454", //Orange/Red
-          "html-cat": "#FF7E35", //Orange
+          "html-fill": "#FFF1E9", //Light Orange
+          "css-fill": "#E0FDEF", //Light Green
+          "javascript-fill": "#E0FDEF", //Light blue
+          "accessibility-fill": "#F6E7FF", //Light Purple
         },
       },
       fontFamily: {

@@ -1,19 +1,14 @@
-import { component$ } from "@builder.io/qwik";
-import QuizIcon from "./Quiz-icon";
-import { useQuizData } from "~/routes/layout";
+import { type ClassList, component$ } from "@builder.io/qwik";
 
-export default component$(() => {
-  const quizSignal = useQuizData();
-  console.log(quizSignal.value);
-  return (
-    <div class="flex items-center gap-3 rounded-xl bg-white p-3">
-      <QuizIcon
-        class="bg-skin-html-cat/10"
-        height={40}
-        width={40}
-        src="/src/media/icon-html.svg"
-      />
-      <h2 class="text-hdgXs font-medium">HTML</h2>
-    </div>
-  );
-});
+import QuizIcon from "./Quiz-icon";
+
+export default component$(
+  (props: { class: ClassList; src: string; name: string }) => {
+    return (
+      <div class="mb-4 flex items-center gap-3 rounded-xl bg-white p-3">
+        <QuizIcon class={props.class} height={40} width={40} src={props.src} />
+        <h2 class="text-hdgXs font-medium">{props.name}</h2>
+      </div>
+    );
+  },
+);
