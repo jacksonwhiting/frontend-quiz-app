@@ -3,19 +3,6 @@ import { useLocation, type DocumentHead } from "@builder.io/qwik-city";
 import QuizCardOneline from "~/components/Quiz-card-oneline";
 import quizData from "../../public/data.json";
 
-export const quizColors = {
-  html: "bg-skin-html-fill",
-  css: "bg-skin-css-fill",
-  javascript: "bg-skin-javascript-fill",
-  accessibility: "bg-skin-accessibility-fill",
-};
-
-// quizData.quizzes.map((quiz) => {
-//   console.log(
-//     quizColors[`${quiz.title.toLocaleLowerCase() as keyof typeof quizColors}`],
-//   );
-// });
-
 export default component$(() => {
   const location = useLocation();
   console.log(location.url);
