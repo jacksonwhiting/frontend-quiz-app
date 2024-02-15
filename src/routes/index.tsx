@@ -29,15 +29,10 @@ export default component$(() => {
       </section>
       <section class="mt-8">
         {quizData.quizzes.map((quiz) => {
-          console.log(quiz.icon);
           return (
             <a key={quiz.title} href={`${quiz.title.toLowerCase()}`}>
               <QuizCardOneline
-                class={
-                  quizColors[
-                    `${quiz.title.toLocaleLowerCase() as keyof typeof quizColors}`
-                  ]
-                }
+                style={`background-color: ${quiz.color}`}
                 src={quiz.icon}
                 name={quiz.title}
               />
