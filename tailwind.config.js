@@ -10,6 +10,7 @@ export default {
           "brand-sec": "#FFFFFF", //White
           "text-pri": "#313E51", //Dark Navy
           "fill-pri": "#F4F6FA", //Light Gray
+          "text-question": "#626C7F", //Grey Navy
           success: "#26D782", //Lime Green
           caution: "#EE5454", //Orange/Red
           "html-fill": "#FFF1E9", //Light Orange

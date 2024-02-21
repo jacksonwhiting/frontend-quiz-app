@@ -20,7 +20,7 @@ export default component$(() => {
               height={28}
               width={28}
             />
-            <h2 class="font-semi-bold text-hdgXs">{quizData.title}</h2>
+            <h1 class="font-semi-bold text-hdgXs">{quizData.title}</h1>
           </>
         )}
       </div>
