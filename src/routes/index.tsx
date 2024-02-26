@@ -1,7 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import { useLocation, type DocumentHead } from "@builder.io/qwik-city";
 import QuizCardOneline from "~/components/Quiz-card-oneline";
-import quizData from "../../public/data.json";
+import quizData from "../../src/data.json";
 
 export default component$(() => {
   const location = useLocation();
@@ -17,7 +17,7 @@ export default component$(() => {
       <section class="mt-8">
         {quizData.quizzes.map((quiz) => {
           return (
-            <a key={quiz.title} href={`${quiz.title.toLowerCase()}`}>
+            <a key={quiz.title} href={`${quiz.title.toLowerCase()}/1`}>
               <QuizCardOneline
                 style={`background-color: ${quiz.color}`}
                 src={quiz.icon}

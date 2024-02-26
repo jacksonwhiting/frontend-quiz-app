@@ -1,13 +1,13 @@
 import { component$ } from "@builder.io/qwik";
 import QuizIcon from "./Quiz-icon";
 import { useLocation } from "@builder.io/qwik-city";
-import { quizzes } from "../../public/data.json";
+import { quizzes } from "../../src/data.json";
 import { matchQuizData } from "./Utilities";
 
 export default component$(() => {
   const loc = useLocation();
-  const locPathName = loc.url.pathname.replaceAll("/", "");
-  const quizData = matchQuizData(locPathName, quizzes);
+  const categoryPath = loc.params.category;
+  const quizData = matchQuizData(categoryPath, quizzes);
 
   return (
     <header class="flex items-center justify-between ">
