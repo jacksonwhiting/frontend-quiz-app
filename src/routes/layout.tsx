@@ -49,7 +49,16 @@ export default component$(() => {
   // const quizSignal = useQuizData();
 
   return (
-    <div class="min-h-screen bg-skin-canvas-pri bg-[url('./media/pattern-background-mobile-light.svg')] bg-no-repeat px-6 py-3">
+    <div
+      class="mx-auto min-h-screen  bg-skin-canvas-pri bg-[url('/media/patter-background-mobile-light')]
+     bg-no-repeat px-6 py-3 dark:bg-skin-text-pri
+     dark:bg-[url('/media/pattern-background-mobile-dark.svg')]
+     sm:bg-[url('/media/pattern-background-tablet-light.svg')]
+     sm:py-10
+     sm:dark:bg-[url('/media/pattern-background-tablet-dark.svg')] 
+     lg:py-14
+     xl:bg-[url('/media/pattern-background-desktop-light.svg')] xl:dark:bg-[url('/media/pattern-background-desktop-dark.svg')]"
+    >
       <Header />
       <main>
         <Slot />

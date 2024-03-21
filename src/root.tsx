@@ -22,11 +22,33 @@ export default component$(() => {
     <QwikCityProvider>
       <head>
         <meta charSet="utf-8" />
+        <script
+          dangerouslySetInnerHTML={`
+        (function() {
+          function setTheme(theme) {
+            document.documentElement.className = theme;
+            localStorage.setItem('theme', theme);
+          }
+          var theme = localStorage.getItem('theme');
+          console.log(theme);
+          if (theme) {
+            setTheme(theme);
+          } else {
+            setTheme('light');
+          }
+        })();
+        window.addEventListener('load', function() {
+          var themeSwitch = document.getElementById('light-dark-switch');
+          themeSwitch.checked = localStorage.getItem('theme') === 'light'? true: false;
+        }
+        );
+      `}
+        ></script>
         <link rel="manifest" href="/manifest.json" />
         <RouterHead />
         <ServiceWorkerRegister />
       </head>
-      <body lang="en" class="text-bodyM font-fontPri">
+      <body lang="en" class="font-fontPri text-bodyM">
         <RouterOutlet />
       </body>
     </QwikCityProvider>

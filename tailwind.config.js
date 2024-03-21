@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
@@ -11,6 +12,7 @@ export default {
           "text-pri": "#313E51", //Dark Navy
           "fill-pri": "#F4F6FA", //Light Gray
           "text-question": "#626C7F", //Grey Navy
+          "fill-navy": "#3B4D66", //Navy
           success: "#26D782", //Lime Green
           caution: "#EE5454", //Orange/Red
           "html-fill": "#FFF1E9", //Light Orange

@@ -1,7 +1,9 @@
-import { component$, useSignal, $ } from "@builder.io/qwik";
-import { Link, useLocation, type DocumentHead } from "@builder.io/qwik-city";
-import ImgIconCorrect from "../../../media/icon-correct.svg?jsx";
-import ImgIconIncorrect from "../../../media/icon-incorrect.svg?jsx";
+import { component$, $, useStore, useVisibleTask$ } from "@builder.io/qwik";
+import {
+  useLocation,
+  type DocumentHead,
+  useNavigate,
+} from "@builder.io/qwik-city";
 import { quizzes } from "../../../data.json";
 import QuizIcon from "~/components/Quiz-icon";
 
@@ -10,26 +12,164 @@ export default component$(() => {
   const categoryPath = loc.params.category;
   const questionPathNumber = Number(loc.params.questions);
   const questionPath = loc.params.questions;
-  const selectedAnswer = useSignal("");
-  const numberCorrectAnswers = useSignal(0);
+  const nav = useNavigate();
   const questionLetters = ["A", "B", "C", "D"];
-  const hideSubmit = useSignal(false);
-  const answerIsCorrect = useSignal(false);
-  const successVisible = useSignal(false);
-  const failureVisible = useSignal(false);
-  const submitHandlerCorrect = $(() => {
-    numberCorrectAnswers.value++;
-    hideSubmit.value = true;
-    successVisible.value = true;
-    failureVisible.value = false;
-    answerIsCorrect.value = true;
-    console.log("correct");
+
+  //Get persisted data from Session Storage
+  const getSessionData = $(async () => {
+    const sessionDataArr = [];
+    for (const value of Object.values(sessionStorage)) {
+      const newValue = await JSON.parse(value);
+      sessionDataArr.push(newValue);
+    }
+    sessionDataArr.sort((a, b) => a.question - b.question);
+    return sessionDataArr;
   });
+
+  const clearSessionData = $(() => {
+    sessionStorage.clear();
+  });
+
+  const quizState = useStore({
+    selectedAnswer: "",
+    submittedAnswer: "",
+    numberCorrectAnswers: 0,
+    hideSubmit: false,
+    answerIsCorrect: false,
+    answerIsIncorrect: false,
+    disableRadioInputs: false,
+    showErrorMsg: false,
+  });
+
+  interface questionTrackerTypes {
+    question: number;
+    selectedAnswer: string;
+    submittedAnswer: string;
+    hideSubmit: boolean;
+    answerIsCorrect: boolean;
+    answerIsIncorrect: boolean;
+    numberCorrectAnswers: number | undefined;
+  }
+
+  // const questionTracker: questionTrackerTypes[] = useStore([]);
+
+  const pushDataToTracker = $(() => {
+    const questionTracker = {
+      question: questionPathNumber,
+      selectedAnswer: quizState.submittedAnswer,
+      submittedAnswer: quizState.submittedAnswer,
+      hideSubmit: true,
+      answerIsCorrect: quizState.answerIsCorrect,
+      answerIsIncorrect: quizState.answerIsIncorrect,
+      numberCorrectAnswers: quizState.numberCorrectAnswers,
+    };
+    // questionTracker.push({
+    //   question: questionPathNumber,
+    //   selectedAnswer: quizState.submittedAnswer,
+    //   submittedAnswer: quizState.submittedAnswer,
+    //   hideSubmit: true,
+    //   answerIsCorrect: quizState.answerIsCorrect,
+    //   answerIsIncorrect: quizState.answerIsIncorrect,
+    //   numberCorrectAnswers: quizState.numberCorrectAnswers,
+    // });
+
+    console.log("push data to tracker");
+    const stringTracker = JSON.stringify(questionTracker);
+    sessionStorage.setItem(String(questionPathNumber), stringTracker);
+  });
+
+  const submitHandlerCorrect = $(() => {
+    quizState.numberCorrectAnswers++;
+    quizState.submittedAnswer = quizState.selectedAnswer;
+    quizState.answerIsCorrect = true;
+    quizState.disableRadioInputs = true;
+    quizState.showErrorMsg = false;
+    quizState.hideSubmit = true;
+    // console.log(questionTracker);
+  });
+
   const submitHandlerIncorrect = $(() => {
-    hideSubmit.value = true;
-    failureVisible.value = true;
-    successVisible.value = false;
-    console.log("incorrect");
+    quizState.hideSubmit = true;
+    quizState.submittedAnswer = quizState.selectedAnswer;
+    quizState.answerIsIncorrect = true;
+    quizState.disableRadioInputs = true;
+    quizState.showErrorMsg = false;
+    quizState.hideSubmit = true;
+  });
+
+  const submitHandler = $(async (quizAnswer: string) => {
+    if (!quizState.selectedAnswer) {
+      quizState.showErrorMsg = true;
+    } else if (quizState.selectedAnswer === quizAnswer) {
+      await submitHandlerCorrect();
+      await pushDataToTracker();
+    } else {
+      await submitHandlerIncorrect();
+      await pushDataToTracker();
+    }
+  });
+
+  const ifBackwardsNavigate = $((answeredQuestions: questionTrackerTypes[]) => {
+    // console.log("the question path number changed");
+
+    answeredQuestions.forEach((question) => {
+      // console.log(question.question);
+      // console.log(questionPathNumber);
+      if (question.question === questionPathNumber) {
+        quizState.disableRadioInputs = true;
+        quizState.hideSubmit = true;
+        quizState.selectedAnswer = question.selectedAnswer;
+        quizState.submittedAnswer = question.submittedAnswer;
+        quizState.answerIsCorrect = question.answerIsCorrect;
+        quizState.answerIsIncorrect = question.answerIsIncorrect;
+      }
+    });
+  });
+
+  const restoreDefaults = $(() => {
+    quizState.selectedAnswer = "";
+    quizState.submittedAnswer = "";
+    quizState.hideSubmit = false;
+    quizState.answerIsCorrect = false;
+    quizState.answerIsIncorrect = false;
+    quizState.disableRadioInputs = false;
+  });
+
+  // useVisibleTask$(async () => {
+
+  //   const answeredQuestions = await getSessionData();
+  //   const lastAnsweredQuestion = () => {
+  //     if (answeredQuestions.length > 0) {
+  //       return answeredQuestions.filter(
+  //         (item) => item.question === questionPathNumber - 1,
+  //       );
+  //     } else {
+  //       return [];
+  //     }
+  //   };
+
+  //   console.log(answeredQuestions);
+  //   console.log(lastAnsweredQuestion());
+  //   ifBackwardsNavigate(answeredQuestions);
+
+  //   console.log("Runs once when the component mounts in the server OR client.");
+  // });
+  useVisibleTask$(async () => {
+    const answeredQuestions = await getSessionData();
+
+    if (answeredQuestions.length > 0) {
+      const lastAnsweredQuestion = answeredQuestions.filter(
+        (item) => item.question === answeredQuestions.length,
+      );
+      quizState.numberCorrectAnswers =
+        lastAnsweredQuestion[0].numberCorrectAnswers;
+      console.log(answeredQuestions);
+      console.log(quizState.numberCorrectAnswers);
+    }
+
+    ifBackwardsNavigate(answeredQuestions);
+
+    console.log("Runs once when the component mounts in the server OR client.");
   });
 
   return (
@@ -41,7 +181,7 @@ export default component$(() => {
         ) {
           return (
             <section key={quiz.title} class="mt-10">
-              <h2 class="text-skin-text-question text-bodyM font-light italic leading-6 ">
+              <h2 class="text-bodyM font-light italic leading-6 text-skin-text-question ">
                 {`Question ${questionPathNumber} of ${quiz.questions.length}`}
               </h2>
               <h3 class="mt-4 text-[1.25rem] font-medium leading-7 text-skin-text-pri">
@@ -51,7 +191,7 @@ export default component$(() => {
               {/* Progress Bar */}
               <div class="mt-6 rounded-full bg-skin-brand-sec p-1">
                 <div
-                  style="width: 20%"
+                  style={`width: ${questionPathNumber * 10}%`}
                   class="rounded-full bg-skin-brand-pri p-1"
                 ></div>
               </div>
@@ -64,80 +204,130 @@ export default component$(() => {
                       <label
                         key={index}
                         class={[
-                          "flex w-full items-center justify-between gap-6 rounded-2xl bg-white p-3 outline-none focus-within:ring-4 focus-within:ring-skin-brand-pri",
-                          choice ===
-                            quiz.questions[questionPathNumber - 1].answer &&
-                            answerIsCorrect.value &&
+                          "flex w-full items-center justify-between gap-4 rounded-2xl bg-white p-3 outline-none focus-within:ring-4 focus-within:ring-skin-brand-pri",
+                          choice === quizState.submittedAnswer &&
+                            quizState.answerIsCorrect &&
                             "ring-4 ring-skin-success focus-within:ring-skin-success",
+                          choice === quizState.submittedAnswer &&
+                            quizState.answerIsIncorrect &&
+                            "ring-4 ring-skin-caution focus-within:ring-skin-caution",
                         ]}
                       >
                         <input
                           type="radio"
-                          class="sr-only"
-                          onChange$={(event, currentTarget) => {
-                            selectedAnswer.value = currentTarget.value;
-                            console.log(selectedAnswer.value);
+                          disabled={quizState.disableRadioInputs}
+                          class="peer sr-only"
+                          onclick$={(event, currentTarget) => {
+                            quizState.selectedAnswer = currentTarget.value;
+                            // console.log(quizState.selectedAnswer);
                           }}
                           name={quiz.questions[
                             questionPathNumber - 1
                           ].question.replaceAll(" ", "-")}
                           value={choice}
                         />
-                        <div class="flex items-center gap-6">
-                          <div class="text-skin-text-question h-14 w-14 rounded-lg bg-skin-fill-pri p-2 text-center text-hdgS">
+
+                        <div class="flex items-center gap-4">
+                          <div class="h-14 w-14 shrink-0 rounded-lg bg-skin-fill-pri p-2 text-center text-hdgS text-skin-text-question">
                             {questionLetters[index]}
                           </div>
-                          <h2 class="text-hdgXs text-left text-skin-text-pri">
+                          <h2 class="text-left text-[1rem] text-skin-text-pri">
                             {choice}
                           </h2>
                         </div>
-                        {successVisible.value && <ImgIconCorrect />}
-                        {failureVisible.value && <ImgIconIncorrect />}
+
+                        <div class="h-[40px] w-[40px]">
+                          {choice === quizState.submittedAnswer &&
+                            quizState.answerIsCorrect && (
+                              <img
+                                src="/media/icon-correct.svg"
+                                width={40}
+                                height={40}
+                              ></img>
+                            )}
+                          {choice === quizState.submittedAnswer &&
+                            quizState.answerIsIncorrect && (
+                              <img
+                                src="/media/icon-incorrect.svg"
+                                width={40}
+                                height={40}
+                              ></img>
+                            )}
+                        </div>
                       </label>
                     );
                   },
                 )}
 
                 {/* Submit Button */}
-                <button
-                  type="button"
-                  preventdefault:click
-                  onClick$={() =>
-                    selectedAnswer.value ===
-                    quiz.questions[questionPathNumber - 1].answer
-                      ? submitHandlerCorrect()
-                      : submitHandlerIncorrect()
-                  }
-                  class="text-hdgXs flex w-full cursor-pointer items-center justify-center rounded-2xl bg-skin-brand-pri p-4 text-skin-brand-sec"
-                >
-                  Submit Answer
-                </button>
-                <p>{numberCorrectAnswers}</p>
-                <Link
-                  href={
-                    questionPathNumber < quiz.questions.length
-                      ? `../${questionPathNumber + 1}`
-                      : `../results`
-                  }
-                  type="button"
-                  class="text-hdgXs flex w-full cursor-pointer items-center justify-center rounded-2xl bg-skin-brand-pri p-4 text-skin-brand-sec"
-                >
-                  Next Question
-                </Link>
+                {!quizState.hideSubmit && (
+                  <button
+                    type="button"
+                    preventdefault:click
+                    onClick$={async () => {
+                      await submitHandler(
+                        quiz.questions[questionPathNumber - 1].answer,
+                      );
+                      await getSessionData();
+                    }}
+                    class="flex w-full cursor-pointer items-center justify-center rounded-2xl bg-skin-brand-pri p-4 text-hdgXs text-skin-brand-sec"
+                  >
+                    Submit Answer
+                  </button>
+                )}
+
+                {/* Next Question Button */}
+                {quizState.hideSubmit && (
+                  <a
+                    href={
+                      questionPathNumber < quiz.questions.length
+                        ? `../${questionPathNumber + 1}`
+                        : `../results`
+                    }
+                    type="button"
+                    onClick$={() => {
+                      restoreDefaults();
+                    }}
+                    class="flex w-full cursor-pointer items-center justify-center rounded-2xl bg-skin-brand-pri p-4 text-hdgXs text-skin-brand-sec"
+                  >
+                    Next Question
+                  </a>
+                  // <button
+                  //   type="button"
+                  //   onClick$={async () => {
+                  //     await nav(
+                  //       questionPathNumber < quiz.questions.length
+                  //         ? `../${questionPathNumber + 1}`
+                  //         : `../results`,
+                  //     );
+                  //     await console.log(questionPathNumber);
+                  //     await restoreDefaults();
+                  //     // await ifBackwardsNavigate();
+                  //   }}
+                  //   class="flex w-full cursor-pointer items-center justify-center rounded-2xl bg-skin-brand-pri p-4 text-hdgXs text-skin-brand-sec"
+                  // >
+                  //   Next Question
+                  // </button>
+                )}
 
                 {/* No answer selected error message */}
-                <div class="flex items-center justify-center gap-2">
-                  <ImgIconIncorrect></ImgIconIncorrect>
-                  <p class="text-hdgXs text-skin-caution">
-                    Please select an answer
-                  </p>
-                </div>
+                {quizState.showErrorMsg && (
+                  <div class="flex items-center justify-center gap-2">
+                    <img
+                      src="/media/icon-incorrect.svg"
+                      width={40}
+                      height={40}
+                    ></img>
+                    <p class="text-hdgXs text-skin-caution">
+                      Please select an answer
+                    </p>
+                  </div>
+                )}
               </form>
             </section>
           );
         }
       })}
-
       {/* Quiz completed page */}
       {quizzes.map((quiz) => {
         if (
@@ -165,9 +355,9 @@ export default component$(() => {
                   )}
                 </div>
                 <p class="text-[5.5rem] font-medium leading-none text-skin-text-pri">
-                  8
+                  {quizState.numberCorrectAnswers}
                 </p>
-                <p class="text-hdgXs text-skin-text-question font-light">
+                <p class="text-hdgXs font-light text-skin-text-question">
                   {`out of ${quiz.questions.length}`}
                 </p>
               </div>
@@ -176,7 +366,13 @@ export default component$(() => {
               <a
                 href={`/`}
                 type="button"
-                class="text-hdgXs flex w-full cursor-pointer items-center justify-center rounded-2xl bg-skin-brand-pri p-4 text-skin-brand-sec"
+                preventdefault:click
+                onClick$={() => {
+                  clearSessionData();
+                  restoreDefaults();
+                  nav("/");
+                }}
+                class="flex w-full cursor-pointer items-center justify-center rounded-2xl bg-skin-brand-pri p-4 text-hdgXs text-skin-brand-sec"
               >
                 Play Again
               </a>
