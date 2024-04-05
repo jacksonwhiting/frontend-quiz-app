@@ -23,41 +23,17 @@ export const useServerTimeLoader = routeLoader$(() => {
   };
 });
 
-//https://mocki.io/v1/34bf1f5a-6158-440d-96fe-372a1e245700
-
-// export const useQuizData = routeLoader$(async () => {
-
-//   const data = await fetch(
-//     "https://mocki.io/v1/34bf1f5a-6158-440d-96fe-372a1e245700",
-//   ).then((response) => {
-//     try {
-//       if (!response.ok) {
-//         throw new Error(
-//           "Received a response other than 'ok' when fetching data from the URL ",
-//         );
-//       } else {
-//         return response.json();
-//       }
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   });
-//   return data;
-// });
-
 export default component$(() => {
-  // const quizSignal = useQuizData();
-
   return (
     <div
       class="mx-auto min-h-screen  bg-skin-canvas-pri bg-[url('/media/patter-background-mobile-light')]
-     bg-no-repeat px-6 py-3 dark:bg-skin-text-pri
-     dark:bg-[url('/media/pattern-background-mobile-dark.svg')]
+     bg-no-repeat px-6 py-3 dark:bg-skin-text-pri dark:bg-[url('/media/pattern-background-mobile-dark.svg')]
      sm:bg-[url('/media/pattern-background-tablet-light.svg')]
      sm:py-10
-     sm:dark:bg-[url('/media/pattern-background-tablet-dark.svg')] 
-     lg:py-14
-     xl:bg-[url('/media/pattern-background-desktop-light.svg')] xl:dark:bg-[url('/media/pattern-background-desktop-dark.svg')]"
+     sm:dark:bg-[url('/media/pattern-background-tablet-dark.svg')]
+     lg:py-14 
+     xl:bg-[url('/media/pattern-background-desktop-light.svg')]
+     xl:px-20 xl:dark:bg-[url('/media/pattern-background-desktop-dark.svg')]"
     >
       <Header />
       <main>

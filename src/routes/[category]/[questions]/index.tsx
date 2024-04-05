@@ -63,15 +63,6 @@ export default component$(() => {
       answerIsIncorrect: quizState.answerIsIncorrect,
       numberCorrectAnswers: quizState.numberCorrectAnswers,
     };
-    // questionTracker.push({
-    //   question: questionPathNumber,
-    //   selectedAnswer: quizState.submittedAnswer,
-    //   submittedAnswer: quizState.submittedAnswer,
-    //   hideSubmit: true,
-    //   answerIsCorrect: quizState.answerIsCorrect,
-    //   answerIsIncorrect: quizState.answerIsIncorrect,
-    //   numberCorrectAnswers: quizState.numberCorrectAnswers,
-    // });
 
     console.log("push data to tracker");
     const stringTracker = JSON.stringify(questionTracker);
@@ -85,7 +76,6 @@ export default component$(() => {
     quizState.disableRadioInputs = true;
     quizState.showErrorMsg = false;
     quizState.hideSubmit = true;
-    // console.log(questionTracker);
   });
 
   const submitHandlerIncorrect = $(() => {
@@ -110,11 +100,7 @@ export default component$(() => {
   });
 
   const ifBackwardsNavigate = $((answeredQuestions: questionTrackerTypes[]) => {
-    // console.log("the question path number changed");
-
     answeredQuestions.forEach((question) => {
-      // console.log(question.question);
-      // console.log(questionPathNumber);
       if (question.question === questionPathNumber) {
         quizState.disableRadioInputs = true;
         quizState.hideSubmit = true;
@@ -135,25 +121,6 @@ export default component$(() => {
     quizState.disableRadioInputs = false;
   });
 
-  // useVisibleTask$(async () => {
-
-  //   const answeredQuestions = await getSessionData();
-  //   const lastAnsweredQuestion = () => {
-  //     if (answeredQuestions.length > 0) {
-  //       return answeredQuestions.filter(
-  //         (item) => item.question === questionPathNumber - 1,
-  //       );
-  //     } else {
-  //       return [];
-  //     }
-  //   };
-
-  //   console.log(answeredQuestions);
-  //   console.log(lastAnsweredQuestion());
-  //   ifBackwardsNavigate(answeredQuestions);
-
-  //   console.log("Runs once when the component mounts in the server OR client.");
-  // });
   useVisibleTask$(async () => {
     const answeredQuestions = await getSessionData();
 
@@ -180,31 +147,36 @@ export default component$(() => {
           questionPathNumber <= quiz.questions.length
         ) {
           return (
-            <section key={quiz.title} class="mt-10">
-              <h2 class="text-bodyM font-light italic leading-6 text-skin-text-question ">
-                {`Question ${questionPathNumber} of ${quiz.questions.length}`}
-              </h2>
-              <h3 class="mt-4 text-[1.25rem] font-medium leading-7 text-skin-text-pri">
-                {quiz.questions[questionPathNumber - 1].question}
-              </h3>
+            <section
+              key={quiz.title}
+              class="mx-auto mt-10 max-w-screen-md gap-28 xl:mt-16 xl:grid xl:max-w-screen-xl xl:grid-cols-2 xl:grid-rows-2"
+            >
+              <div class="contents xl:block">
+                <h2 class="text-bodyM font-light italic leading-6 text-skin-text-question dark:text-[#ABC1E1] xl:text-hdgXs ">
+                  {`Question ${questionPathNumber} of ${quiz.questions.length}`}
+                </h2>
+                <h3 class="mt-4 text-[1.25rem] font-medium leading-7 text-skin-text-pri dark:text-skin-brand-sec xl:mt-10 xl:text-hdgS">
+                  {quiz.questions[questionPathNumber - 1].question}
+                </h3>
 
-              {/* Progress Bar */}
-              <div class="mt-6 rounded-full bg-skin-brand-sec p-1">
-                <div
-                  style={`width: ${questionPathNumber * 10}%`}
-                  class="rounded-full bg-skin-brand-pri p-1"
-                ></div>
+                {/* Progress Bar */}
+                <div class="mt-6 self-start rounded-full bg-skin-brand-sec p-[0.175rem] dark:bg-skin-fill-navy xl:mt-60">
+                  <div
+                    style={`width: ${questionPathNumber * 10}%`}
+                    class="rounded-full bg-skin-brand-pri p-1 xl:p-[.2rem]"
+                  ></div>
+                </div>
               </div>
 
               {/* Quiz Questions */}
-              <form class="mt-10 space-y-4">
+              <form class="mt-10 space-y-4 xl:mt-0">
                 {quiz.questions[questionPathNumber - 1].options.map(
                   (choice, index) => {
                     return (
                       <label
                         key={index}
                         class={[
-                          "flex w-full items-center justify-between gap-4 rounded-2xl bg-white p-3 outline-none focus-within:ring-4 focus-within:ring-skin-brand-pri",
+                          "flex w-full items-center justify-between gap-4 rounded-2xl bg-white p-3 outline-none focus-within:ring-4 focus-within:ring-skin-brand-pri dark:bg-skin-fill-navy",
                           choice === quizState.submittedAnswer &&
                             quizState.answerIsCorrect &&
                             "ring-4 ring-skin-success focus-within:ring-skin-success",
@@ -231,7 +203,7 @@ export default component$(() => {
                           <div class="h-14 w-14 shrink-0 rounded-lg bg-skin-fill-pri p-2 text-center text-hdgS text-skin-text-question">
                             {questionLetters[index]}
                           </div>
-                          <h2 class="text-left text-[1rem] text-skin-text-pri">
+                          <h2 class="text-left text-[1rem] text-skin-text-pri dark:text-skin-brand-sec xl:text-[1.3rem]">
                             {choice}
                           </h2>
                         </div>
@@ -270,7 +242,7 @@ export default component$(() => {
                       );
                       await getSessionData();
                     }}
-                    class="flex w-full cursor-pointer items-center justify-center rounded-2xl bg-skin-brand-pri p-4 text-hdgXs text-skin-brand-sec"
+                    class="flex w-full cursor-pointer items-center justify-center rounded-2xl bg-skin-brand-pri p-4 text-hdgXs text-skin-brand-sec xl:text-[1.3rem]"
                   >
                     Submit Answer
                   </button>
@@ -288,29 +260,13 @@ export default component$(() => {
                     onClick$={() => {
                       restoreDefaults();
                     }}
-                    class="flex w-full cursor-pointer items-center justify-center rounded-2xl bg-skin-brand-pri p-4 text-hdgXs text-skin-brand-sec"
+                    class="flex w-full cursor-pointer items-center justify-center rounded-2xl bg-skin-brand-pri p-4 text-hdgXs text-skin-brand-sec xl:text-[1.3rem]"
                   >
                     Next Question
                   </a>
-                  // <button
-                  //   type="button"
-                  //   onClick$={async () => {
-                  //     await nav(
-                  //       questionPathNumber < quiz.questions.length
-                  //         ? `../${questionPathNumber + 1}`
-                  //         : `../results`,
-                  //     );
-                  //     await console.log(questionPathNumber);
-                  //     await restoreDefaults();
-                  //     // await ifBackwardsNavigate();
-                  //   }}
-                  //   class="flex w-full cursor-pointer items-center justify-center rounded-2xl bg-skin-brand-pri p-4 text-hdgXs text-skin-brand-sec"
-                  // >
-                  //   Next Question
-                  // </button>
                 )}
 
-                {/* No answer selected error message */}
+                {/* Error message if no answer is selected */}
                 {quizState.showErrorMsg && (
                   <div class="flex items-center justify-center gap-2">
                     <img
@@ -335,47 +291,54 @@ export default component$(() => {
           questionPath === "results"
         ) {
           return (
-            <div key={quiz.title} class="mt-10">
-              <h2 class="mb-8 text-hdgM font-light text-skin-text-pri">
+            <div
+              key={quiz.title}
+              class="mx-auto mt-16 max-w-screen-md xl:mt-20 xl:grid xl:max-w-screen-xl xl:grid-cols-2 xl:gap-16"
+            >
+              <h2 class="mb-8 text-hdgM font-light text-skin-text-pri dark:text-skin-brand-sec xl:mb-0 xl:text-hdgL">
                 Quiz completed <br />
                 <b class="font-medium">You scored...</b>
               </h2>
-              <div class="mb-4 space-y-4 rounded-xl bg-white px-3 py-8 text-center">
-                <div class="flex items-center justify-center gap-4">
-                  {loc.url.pathname !== "/" && (
-                    <>
-                      <QuizIcon
-                        style={`background-color: ${quiz.color}`}
-                        src={quiz.icon}
-                        height={28}
-                        width={28}
-                      />
-                      <h2 class="font-semi-bold text-hdgXs">{quiz.title}</h2>
-                    </>
-                  )}
+              <div class="contents xl:block">
+                <div class="mb-4 space-y-4 rounded-xl  bg-white px-3 py-8 text-center dark:bg-skin-fill-navy">
+                  <div class="flex items-center justify-center gap-4">
+                    {loc.url.pathname !== "/" && (
+                      <>
+                        <QuizIcon
+                          style={`background-color: ${quiz.color}`}
+                          src={quiz.icon}
+                          height={28}
+                          width={28}
+                        />
+                        <h2 class="font-semi-bold text-hdgXs dark:text-skin-brand-sec xl:text-hdgS">
+                          {quiz.title}
+                        </h2>
+                      </>
+                    )}
+                  </div>
+                  <p class="text-[5.5rem] font-medium leading-none text-skin-text-pri dark:text-skin-brand-sec xl:text-[8rem]">
+                    {quizState.numberCorrectAnswers}
+                  </p>
+                  <p class="dark:text-skin-[#ABC1E1] text-hdgXs font-light text-skin-text-question dark:font-medium xl:text-hdgS">
+                    {`out of ${quiz.questions.length}`}
+                  </p>
                 </div>
-                <p class="text-[5.5rem] font-medium leading-none text-skin-text-pri">
-                  {quizState.numberCorrectAnswers}
-                </p>
-                <p class="text-hdgXs font-light text-skin-text-question">
-                  {`out of ${quiz.questions.length}`}
-                </p>
-              </div>
 
-              {/* Play Again button */}
-              <a
-                href={`/`}
-                type="button"
-                preventdefault:click
-                onClick$={() => {
-                  clearSessionData();
-                  restoreDefaults();
-                  nav("/");
-                }}
-                class="flex w-full cursor-pointer items-center justify-center rounded-2xl bg-skin-brand-pri p-4 text-hdgXs text-skin-brand-sec"
-              >
-                Play Again
-              </a>
+                {/* Play Again button */}
+                <a
+                  href={`/`}
+                  type="button"
+                  preventdefault:click
+                  onClick$={() => {
+                    clearSessionData();
+                    restoreDefaults();
+                    nav("/");
+                  }}
+                  class="flex w-full cursor-pointer items-center justify-center rounded-2xl bg-skin-brand-pri p-4 text-hdgXs text-skin-brand-sec xl:text-hdgS"
+                >
+                  Play Again
+                </a>
+              </div>
             </div>
           );
         }

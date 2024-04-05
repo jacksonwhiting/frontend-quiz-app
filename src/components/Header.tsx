@@ -11,7 +11,7 @@ export default component$(() => {
   const theme = useSignal("light");
 
   return (
-    <header class="mx-auto flex max-w-screen-xl items-center justify-between">
+    <header class="mx-auto flex max-w-screen-md items-center justify-between xl:max-w-screen-xl">
       <div class="flex items-center gap-4">
         {loc.url.pathname !== "/" && (
           <>
@@ -23,7 +23,9 @@ export default component$(() => {
                 width={28}
               />
             </Link>
-            <h1 class="font-semi-bold text-hdgXs">{quizData.title}</h1>
+            <h1 class="font-semi-bold text-hdgXs dark:text-skin-brand-sec xl:text-hdgS">
+              {quizData.title}
+            </h1>
           </>
         )}
       </div>
